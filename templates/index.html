@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>One Time Secret Service</title>
+</head>
+<body>
+    <h1>Welcome to the One Time Secret Service</h1>
+    <form method="POST" id="form">
+        <textarea name="secret" placeholder="Enter your secret here" required></textarea>
+        <br>
+        <button type="submit">Save Secret</button>
+    </form>
+    <br>
+    <div id="result">
+        <input type="text" id="secret_link" readonly>
+    </div>
+    <script>
+        document.getElementById('form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('/api/create', {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            });
+            if (!response.ok) {
+                document.getElementById('secret_link').value = 'Error saving secret';
+                return;
+            }
+            const data = await response.json();
+            const secretId = data.id;
+            const secretLink = `${window.location.origin}/s/${secretId}`;
+            document.getElementById('secret_link').value = secretLink;
+        });
+    </script>
+</body>
+</html>
