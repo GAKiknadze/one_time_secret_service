@@ -2,6 +2,8 @@
 
 A secure web service for storing and sharing one-time secrets (passwords, API keys, confidential information) with automatic deletion after first access.
 
+![Create Secret](docs/images/create_secret.png)
+
 ## 📋 Overview
 
 **One Time Secret Service** is a high-performance Go application that allows users to:
@@ -36,18 +38,32 @@ Data is protected using **AES-256-GCM** cryptography, with the encryption key em
 .
 ├── cmd/
 │   └── main.go              # Application entry point
+├── docs/
+│   └── images/              # Screenshots and documentation images
 ├── internal/
 │   ├── cypher/
 │   │   └── base.go          # Cryptographic module (AES-GCM)
 │   └── storage/
 │       ├── base.go          # Storage interface
 │       └── database.go      # GORM implementation
+├── static/
+│   ├── scripts.js           # Frontend logic with animations
+│   └── styles.css           # Responsive styling (Graphite & Purple theme)
 ├── templates/
 │   ├── index.html           # Home page (secret creation)
 │   └── get_secret.html      # Secret retrieval page
 ├── go.mod                   # Go module
 └── README.md                # This file
 ```
+
+## 🎨 User Interface
+
+The application features a modern, responsive web interface with:
+- **Clean Design**: Dark graphite background with purple accents
+- **Smooth Animations**: Fade-in effects and slide transitions
+- **Mobile-Friendly**: Responsive design that works on all devices
+- **Real-time Feedback**: Toast notifications for user actions
+- **Intuitive Forms**: Clear instructions and helpful descriptions
 
 ## 🚀 Installation and Setup
 
@@ -64,7 +80,7 @@ go mod download
 go run ./cmd/main.go
 ```
 
-The server will run on `http://localhost:3000`
+The server will run on `http://localhost:8000`
 
 ### Build
 ```bash
@@ -97,7 +113,7 @@ POST /api/create
 
 **Example:**
 ```bash
-curl -X POST http://localhost:3000/api/create \
+curl -X POST http://localhost:8000/api/create \
   -d "secret=my_password_123"
 ```
 
@@ -118,7 +134,7 @@ POST /api/get
 
 **Example:**
 ```bash
-curl -X POST http://localhost:3000/api/get \
+curl -X POST http://localhost:8000/api/get \
   -d "id=3f4a2c1b-a1b2c3d4e5f6g7h8-hex_encrypted_key"
 ```
 
@@ -140,21 +156,29 @@ Returns HTML page for retrieving a secret by ID.
 ## 💡 Usage Examples
 
 ### Web Interface
-1. Open `http://localhost:3000/`
+
+#### Creating a Secret
+1. Open `http://localhost:8000/`
 2. Enter your secret in the form
 3. Copy the generated link
 4. Share the link with the recipient
-5. When the recipient visits the link, the secret is displayed and deleted
+
+![Create Secret](docs/images/create_secret.png)
+
+#### Retrieving a Secret
+When the recipient visits the link, the secret is displayed and automatically deleted.
+
+![Get Secret](docs/images/get_secret.png)
 
 ### Using cURL
 ```bash
 # Create secret
-RESPONSE=$(curl -s -X POST http://localhost:3000/api/create \
+RESPONSE=$(curl -s -X POST http://localhost:8000/api/create \
   -d "secret=super_secret_password")
 ID=$(echo $RESPONSE | grep -o '"id":"[^"]*' | cut -d'"' -f4)
 
 # Retrieve secret
-curl -X POST http://localhost:3000/api/get \
+curl -X POST http://localhost:8000/api/get \
   -d "id=$ID"
 ```
 
