@@ -1,0 +1,267 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #2D3436 0%, #1D2128 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+#container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 100%;
+    padding: 40px 30px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h1 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+h2 {
+    color: #8B5CF6;
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+h3 {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.description {
+    background: #F3E8FF;
+    border-left: 4px solid #8B5CF6;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.description p {
+    margin: 0;
+    color: #555;
+}
+
+.section-description {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 15px !important;
+}
+
+.result-description {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 12px !important;
+}
+
+.warning {
+    color: #d97706;
+    font-weight: 500;
+    margin-top: 8px !important;
+}
+
+.note {
+    color: #999;
+    font-size: 12px;
+    margin-top: 15px !important;
+    font-style: italic;
+}
+
+.form-section {
+    margin: 20px 0;
+}
+
+.result-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color 0.3s ease;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #8B5CF6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+textarea:readonly {
+    background-color: #F3E8FF;
+    color: #333;
+    cursor: text;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 12px;
+    display: inline-block;
+    min-width: 150px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    font-weight: 700;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #374151 0%, #1F2937 100%);
+    color: white;
+    font-weight: 700;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4);
+}
+
+.btn-success:active {
+    transform: translateY(0);
+}
+
+.btn-large {
+    padding: 14px 32px;
+    font-size: 16px;
+    min-width: 200px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+form button {
+    width: 100%;
+    margin-top: 0;
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+    font-weight: 600;
+    font-size: 14px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Fade in animation for result section */
+.fadeIn {
+    animation: fadeInResult 0.4s ease-out;
+}
+
+@keyframes fadeInResult {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    #container {
+        padding: 20px 15px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    h2 {
+        font-size: 18px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 13px;
+        min-width: 120px;
+    }
+    
+    .btn-large {
+        padding: 12px 24px;
+        min-width: 160px;
+    }
+    
+    textarea {
+        font-size: 12px;
+        min-height: 100px;
+    }
+}

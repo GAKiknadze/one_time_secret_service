@@ -1,37 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>One Time Secret Service</title>
-</head>
-<body>
-    <h1>Welcome to the One Time Secret Service</h1>
-    <form method="POST" id="form">
-        <textarea name="secret" placeholder="Enter your secret here" required></textarea>
-        <br>
-        <button type="submit">Save Secret</button>
-    </form>
-    <br>
-    <div id="result">
-        <input type="text" id="secret_link" readonly>
-    </div>
-    <script>
-        document.getElementById('form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            const response = await fetch('/api/create', {
-                method: 'POST',
-                body: new URLSearchParams(formData)
+    <head>
+        <meta charset="UTF-8">
+        <title>One Time Secret Service</title>
+        <link rel="stylesheet" href="/static/styles.css">
+    </head>
+    <body>
+        <div id="container">
+            <h1>🔐 One Time Secret Service</h1>
+            <div class="description">
+                <p>Share sensitive information securely.</p>
+                <p>Your secret will be encrypted and deleted after first view.</p>
+            </div>
+            
+            <div class="form-section">
+                <h2>Create a Secret</h2>
+                <p class="section-description">Enter your message below and we'll generate a secure link. Anyone with the link can view it once, then it's gone forever.</p>
+                <form id="form_create_secret">
+                    <textarea name="secret" placeholder="Enter your secret here..." required></textarea>
+                    <button type="submit" class="btn btn-primary">🔒 Save Secret</button>
+                </form>
+            </div>
+            
+            <div id="result" class="result-section" hidden>
+                <h3>Secret Link Created!</h3>
+                <p class="result-description">Copy the link below and share it with your recipient. Remember: it can only be viewed once!</p>
+                <textarea type="text" id="secret_link" readonly></textarea>
+                <button type="button" onclick="copyToClipboard('secret_link')" class="btn btn-success">📋 Copy Link</button>
+            </div>
+        </div>
+        <script src="/static/scripts.js"></script>
+        <script>
+            document.getElementById('form_create_secret').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const response = await fetch('/api/create', {
+                    method: 'POST',
+                    body: new URLSearchParams(formData)
+                });
+                showResult('result');
+                if (!response.ok) {
+                    document.getElementById('secret_link').value = 'Error saving secret';
+                    return;
+                }
+                const data = await response.json();
+                const secretId = data.id;
+                const secretLink = `${window.location.origin}/s/${secretId}`;
+                document.getElementById('secret_link').value = secretLink;
             });
-            if (!response.ok) {
-                document.getElementById('secret_link').value = 'Error saving secret';
-                return;
-            }
-            const data = await response.json();
-            const secretId = data.id;
-            const secretLink = `${window.location.origin}/s/${secretId}`;
-            document.getElementById('secret_link').value = secretLink;
-        });
-    </script>
-</body>
+        </script>
+    </body>
 </html>

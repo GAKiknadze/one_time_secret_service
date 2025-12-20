@@ -7,6 +7,7 @@ import (
 	"github.com/GAKiknadze/one_time_secret_service/internal/cypher"
 	"github.com/GAKiknadze/one_time_secret_service/internal/storage"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/google/uuid"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -24,8 +25,9 @@ func main() {
 	}
 
 	cypher := &cypher.CypherBase{}
-
 	app := fiber.New()
+
+	app.Use("/static", static.New("./static"))
 
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendFile("./templates/index.html")
