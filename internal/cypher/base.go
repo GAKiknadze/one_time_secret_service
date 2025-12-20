@@ -9,80 +9,87 @@ import (
 	"io"
 )
 
+// Cypher defines the interface for encryption and decryption operations.
 type Cypher interface {
+	// Encrypt encrypts plaintext using the provided hex-encoded key and returns ciphertext
 	Encrypt(key, data string) []byte
+
+	// Decrypt decrypts ciphertext using the provided hex-encoded key and returns plaintext
 	Decrypt(key string, data []byte) (string, error)
+
+	// GenerateKey generates a random cryptographic key of the specified bit length
 	GenerateKey(bits int) (string, error)
 }
 
+// CypherBase provides AES-GCM encryption/decryption implementation
 type CypherBase struct{}
 
-// Encrypt шифрует данные с использованием AES-GCM
-// Ключ должен быть валидной hex-строкой длиной 32, 48 или 64 символа (128, 192 или 256 бит)
+// Encrypt encrypts data using AES-GCM.
+// Key must be a valid hex string of length 32, 48, or 64 characters (128, 192, or 256 bits).
 func (c *CypherBase) Encrypt(key, data string) []byte {
-	// Декодируем hex-ключ в байты
+	// Decode hex key to bytes
 	keyBytes, err := hex.DecodeString(key)
 	if err != nil {
-		// В реальном приложении лучше возвращать ошибку, но сигнатура метода этого не позволяет
-		// Поэтому возвращаем nil или паникуем
+		// In a real application, it's better to return an error, but the method signature doesn't allow it.
+		// So we return nil or panic.
 		panic("invalid hex key format")
 	}
 
-	// Проверяем длину ключа
+	// Validate key length
 	if len(keyBytes) != 16 && len(keyBytes) != 24 && len(keyBytes) != 32 {
 		panic("key length must be 16, 24, or 32 bytes (32, 48, or 64 hex chars)")
 	}
 
-	// Создаем AES-шифр
+	// Create AES cipher
 	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
 		panic(err)
 	}
 
-	// Создаем GCM
+	// Create GCM
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
 		panic(err)
 	}
 
-	// Генерируем nonce
+	// Generate nonce
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
 		panic(err)
 	}
 
-	// Шифруем данные
+	// Encrypt data
 	ciphertext := gcm.Seal(nonce, nonce, []byte(data), nil)
 	return ciphertext
 }
 
-// Decrypt расшифровывает данные, зашифрованные с помощью AES-GCM
-// Ключ должен быть валидной hex-строкой длиной 32, 48 или 64 символа
+// Decrypt decrypts data encrypted with AES-GCM.
+// Key must be a valid hex string of length 32, 48, or 64 characters.
 func (c *CypherBase) Decrypt(key string, data []byte) (string, error) {
-	// Декодируем hex-ключ в байты
+	// Decode hex key to bytes
 	keyBytes, err := hex.DecodeString(key)
 	if err != nil {
 		return "", errors.New("invalid hex key format")
 	}
 
-	// Проверяем длину ключа
+	// Validate key length
 	if len(keyBytes) != 16 && len(keyBytes) != 24 && len(keyBytes) != 32 {
 		return "", errors.New("key length must be 16, 24, or 32 bytes")
 	}
 
-	// Создаем AES-шифр
+	// Create AES cipher
 	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
 		return "", err
 	}
 
-	// Создаем GCM
+	// Create GCM
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
 		return "", err
 	}
 
-	// Извлекаем nonce из начала данных
+	// Extract nonce from the beginning of data
 	nonceSize := gcm.NonceSize()
 	if len(data) < nonceSize {
 		return "", errors.New("ciphertext too short")
@@ -97,9 +104,9 @@ func (c *CypherBase) Decrypt(key string, data []byte) (string, error) {
 	return string(plaintext), nil
 }
 
-// GenerateKey генерирует случайный криптографический ключ заданной битовой длины.
-// Поддерживаются длины: 128, 192 и 256 бит.
-// Возвращает ключ в виде hex-строки (длина строки: 32, 48 или 64 символа).
+// GenerateKey generates a random cryptographic key of the specified bit length.
+// Supported lengths: 128, 192, and 256 bits.
+// Returns the key as a hex string (string length: 32, 48, or 64 characters).
 func (c *CypherBase) GenerateKey(bits int) (string, error) {
 	var byteLen int
 	switch bits {

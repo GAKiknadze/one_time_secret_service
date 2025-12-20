@@ -7,19 +7,22 @@ import (
 	"gorm.io/gorm"
 )
 
+// Record represents an encrypted secret stored in the database.
 type Record struct {
 	ID        uint32    `gorm:"primaryKey"`
 	Data      []byte    `gorm:"not null"`
 	CreatedAt time.Time `gorm:"index"`
 }
 
+// ErrNotFound is returned when a requested record is not found in storage.
 var ErrNotFound = errors.New("record not found")
 
+// StorageDatabase implements the Storage interface using GORM and SQLite.
 type StorageDatabase struct {
 	db *gorm.DB
 }
 
-// NewStorageDatabase инициализирует хранилище и создаёт таблицу при необходимости.
+// NewStorageDatabase initializes storage and creates the table if necessary.
 func NewStorageDatabase(db *gorm.DB) (*StorageDatabase, error) {
 	if err := db.AutoMigrate(&Record{}); err != nil {
 		return nil, err
@@ -27,7 +30,7 @@ func NewStorageDatabase(db *gorm.DB) (*StorageDatabase, error) {
 	return &StorageDatabase{db: db}, nil
 }
 
-// Save сохраняет или обновляет запись по ID.
+// Save saves or updates a record by ID.
 func (s *StorageDatabase) Save(id uint32, data []byte) error {
 	record := Record{
 		ID:   id,
@@ -37,7 +40,7 @@ func (s *StorageDatabase) Save(id uint32, data []byte) error {
 	return result.Error
 }
 
-// Get возвращает данные по ID.
+// Get returns data by ID.
 func (s *StorageDatabase) Get(id uint32) ([]byte, error) {
 	var record Record
 	result := s.db.First(&record, "id = ?", id)
@@ -50,7 +53,7 @@ func (s *StorageDatabase) Get(id uint32) ([]byte, error) {
 	return record.Data, nil
 }
 
-// DeleteById удаляет запись по ID.
+// DeleteById deletes a record by ID.
 func (s *StorageDatabase) DeleteById(id uint32) error {
 	result := s.db.Delete(&Record{}, "id = ?", id)
 	if result.Error != nil {
@@ -62,7 +65,7 @@ func (s *StorageDatabase) DeleteById(id uint32) error {
 	return nil
 }
 
-// Delete удаляет все записи, созданные раньше, чем (сейчас - duration).
+// Delete removes all records created before (now - duration).
 func (s *StorageDatabase) Delete(duration time.Duration) error {
 	cutoff := time.Now().Add(-duration)
 	result := s.db.Where("created_at < ?", cutoff).Delete(&Record{})
